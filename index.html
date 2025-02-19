@@ -49,10 +49,7 @@
         L.geoJSON(serviceAreas, {
           style: { color: "#ff7800", weight: 2, fillOpacity: 0.5 },
           onEachFeature: (feature, layer) => {
-            layer.bindPopup(`
-              <b>${feature.properties.COUNTY_NAME}</b><br>
-              ${feature.properties.STATE_NAME}
-            `);
+            layer.bindPopup(feature.properties.COUNTY_NAME); // Simplified popup
           }
         }).addTo(map);
         
