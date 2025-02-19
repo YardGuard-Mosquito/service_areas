@@ -26,12 +26,13 @@
       attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    // Fetch GeoJSON data
-    const geojsonUrl = "https://services.arcgis.com/njFNhDsUCentVYJW/arcgis/rest/services/MDOT_SHA_County_Boundaries/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson";
+    // Local GeoJSON path
+    const geojsonUrl = "https://raw.githubusercontent.com/YardGuard-Mosquito/service_areas/main/MDOT_SHA_County_Boundaries_6115854045233630476.geojson";
 
     fetch(geojsonUrl)
       .then(response => response.json())
       .then(data => {
+        // Filter counties
         const serviceAreas = {
           ...data,
           features: data.features.filter(feature => [
@@ -44,12 +45,19 @@
           ].includes(feature.properties.COUNTY_NAME))
         };
 
+        // Add styled layer
         L.geoJSON(serviceAreas, {
           style: { color: "#ff7800", weight: 2, fillOpacity: 0.5 },
           onEachFeature: (feature, layer) => {
-            layer.bindPopup(feature.properties.COUNTY_NAME);
+            layer.bindPopup(`
+              <b>${feature.properties.COUNTY_NAME}</b><br>
+              ${feature.properties.STATE_NAME}
+            `);
           }
         }).addTo(map);
+        
+        // Zoom to bounds
+        map.fitBounds(L.geoJSON(serviceAreas).getBounds());
       })
       .catch(error => console.error("Error:", error));
   </script>
